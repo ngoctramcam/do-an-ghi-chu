@@ -26,9 +26,7 @@ res.json({ success: true, message: "Đã cập nhật Profile" });
 res.status(500).json({ message: "Lỗi ghi file" });
 }
 });
-//const PORT = 5000;
-const PORT = 5001;
-
+const PORT = 5000;
 const notesDir = path.join(__dirname, 'data', 'notes');
 // Khởi tạo thư mục tự động nếu chưa tồn tại
 if (!fs.existsSync(notesDir)) {

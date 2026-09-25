@@ -44,6 +44,34 @@ app.get('/api/notes/:topic', (req, res) => {
         res.status(500).json({ message: "Lỗi đọc danh sách ghi chú" });
     }
 });
+
+// 5. Tìm kiếm ghi chú
+app.get('/api/notes/:topic/search', (req, res) => {
+    const filePath = getFilePath(req.params.topic);
+    const keyword = (req.query.q || '').toLowerCase();
+
+    try {
+        if (!fs.existsSync(filePath)) {
+            return res.json([]);
+        }
+
+        const notes = JSON.parse(
+            fs.readFileSync(filePath, 'utf8')
+        );
+
+        const results = notes.filter(note =>
+            note.title.toLowerCase().includes(keyword) ||
+            note.content.toLowerCase().includes(keyword)
+        );
+
+        res.json(results);
+    } catch (error) {
+        res.status(500).json({
+            message: "Lỗi tìm kiếm ghi chú"
+        });
+    }
+});
+
 // 2. Thêm mới ghi chú (POST)
 app.post('/api/notes/:topic', (req, res) => {
     const filePath = getFilePath(req.params.topic);
@@ -93,6 +121,9 @@ app.delete('/api/notes/:topic/:id', (req, res) => {
         res.status(500).json({ message: "Lỗi xóa ghi chú" });
     }
 });
+
+
+
 
 const privateNotesFile = path.join(__dirname, 'data', 'private.json');
 // Khởi tạo file private.json nếu chưa tồn tại
